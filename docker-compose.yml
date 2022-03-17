@@ -1,0 +1,32 @@
+version: '2'
+services:
+    registry-server:
+        container_name: registry-server
+        build:
+            context: service-registry-server
+            dockerfile: Dockerfile
+        image: service-registry-server:latest
+        ports:
+            - 58010:58010
+        networks:
+            - spring-cloud-network
+    config-server:
+        container_name: configuration-server
+        build:
+            context: configuration-server
+            dockerfile: Dockerfile
+        image: configuration-server
+        ports:
+            - 58020:58020
+        networks:
+            - spring-cloud-network
+        volumes:
+            - "./logs:/logs"
+            - "./configuration-data:/configuration-data"
+        environment:
+            - EUREKA_SERVER=http://registry-server:58010/eureka
+        depends_on:
+            - registry-server
+networks:
+    spring-cloud-network:
+        driver: bridge

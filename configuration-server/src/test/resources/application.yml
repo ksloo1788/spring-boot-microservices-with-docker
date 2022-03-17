@@ -1,0 +1,28 @@
+server:
+  port: 58020
+spring:
+  application:
+    name: configuration-server
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: file:../configuration-data
+eureka:
+  client:
+    enabled: false
+logging: 
+  file:
+    path: ../logs/${spring.application.name}/${server.port}
+    max-size: 10MB
+    max-history: 30
+  pattern:
+    file: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n'
+    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger.%M - %msg%n'
+  level:
+    org:
+      springframework: INFO
+    com:
+      microservices: INFO
