@@ -7,9 +7,13 @@ It also shows how to package each application in Docker containers and run them 
 
 * [Java JDK 17](https://openjdk.java.net/projects/jdk/17/)
 
-* [Eclipse](https://www.eclipse.org)
+* [Eclipse](https://www.eclipse.org/)
 
-* [Spring Tools for Eclipse IDE](https://marketplace.eclipse.org/content/spring-tools-4-aka-spring-tool-suite-4)
+* [Spring Tools for Eclipse IDE](https://marketplace.eclipse.org/content/spring-tools-4-aka-spring-tool-suite-4/)
+
+* [Apache Maven](https://maven.apache.org/)
+
+* [Docker Desktop](https://www.docker.com/)
 
 ## Content
 * [Getting Started](#getting-started)
