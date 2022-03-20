@@ -24,7 +24,7 @@ logging:
       netflix:
         discovery: false
         eureka: false
-      looks: INFO
+      jefflks: INFO
     org:
       springframework: INFO
 management:

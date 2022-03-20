@@ -1,4 +1,4 @@
-package com.looks.config;
+package com.jefflks.config;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
