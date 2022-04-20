@@ -1,71 +1,124 @@
 version: '3.9'
-services:
-    registry-server:
-        container_name: registry-server
-        build:
-            context: service-registry-server
-            dockerfile: Dockerfile
-        image: service-registry-server:latest
-        ports:
-            - 58010:58010
-        networks:
-            - spring-cloud-network
-        volumes:
-            - "./logs:/logs"
-        healthcheck:
-          test: "curl --fail --silent localhost:58010/actuator/health | grep UP || exit 1"
-          interval: 20s
-          timeout: 5s
-          retries: 5
-          start_period: 40s
-    config-server:
-        container_name: config-server
-        build:
-            context: configuration-server
-            dockerfile: Dockerfile
-        image: configuration-server
-        ports:
-            - 58020:58020
-        networks:
-            - spring-cloud-network
-        volumes:
-            - "./logs:/logs"
-            - "./configuration-data:/configuration-data"
-        environment:
-            - EUREKA_SERVER=http://registry-server:58010/eureka
-        depends_on:
-            - registry-server
-        healthcheck:
-          test: "curl --fail --silent localhost:58020/actuator/health | grep UP || exit 1"
-          interval: 20s
-          timeout: 5s
-          retries: 5
-          start_period: 40s
-    gateway-server:
-        container_name: gateway-server
-        build:
-            context: gateway-server
-            dockerfile: Dockerfile
-        image: gateway-server
-        ports:
-            - 58000:58000
-        networks:
-            - spring-cloud-network
-        volumes:
-            - "./logs:/logs"
-        environment:
-            - EUREKA_SERVER=http://registry-server:58010/eureka
-            - CONFIG_SERVER=http://config-server:58020/
-            - KEYSTORE_PATH=/binary/keystore.p12
-        depends_on:
-            - config-server
-        healthcheck:
-          test: "curl --fail --silent localhost:58000/actuator/health | grep UP || exit 1"
-          interval: 20s
-          timeout: 5s
-          retries: 5
-          start_period: 40s
-        restart: on-failure
 networks:
-    spring-cloud-network:
-        driver: bridge
+  spring-cloud-network:
+    driver: bridge
+services:    
+  registry-server:
+    container_name: registry-server
+    build:
+      context: service-registry-server
+      dockerfile: Dockerfile
+    image: service-registry-server:latest
+    ports:
+      - 58010:58010
+    networks:
+      - spring-cloud-network
+    volumes:
+      - "./logs:/logs"
+    healthcheck:
+      test: "curl --fail --silent localhost:58010/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+      
+  config-server:
+    container_name: config-server
+    build:
+      context: configuration-server
+      dockerfile: Dockerfile
+    image: configuration-server
+    ports:
+      - 58020:58020
+    networks:
+      - spring-cloud-network
+    volumes:
+      - "./logs:/logs"
+      - "./configuration-data:/configuration-data"
+    environment:
+      - EUREKA_SERVER=http://registry-server:58010/eureka
+    depends_on:
+      - registry-server
+    healthcheck:
+      test: "curl --fail --silent localhost:58020/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+      
+  gateway-server:
+    container_name: gateway-server
+    build:
+      context: gateway-server
+      dockerfile: Dockerfile
+    image: gateway-server
+    ports:
+      - 58000:58000
+    networks:
+      - spring-cloud-network
+    volumes:
+      - "./logs:/logs"
+    environment:
+      - EUREKA_SERVER=http://registry-server:58010/eureka
+      - CONFIG_SERVER=http://config-server:58020/
+      - KEYSTORE_PATH=/binary/keystore.p12
+      - PORT_NUMBER=58112
+    depends_on:
+      - config-server
+    healthcheck:
+      test: "curl --fail --silent localhost:58000/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    restart: on-failure
+    
+  common-service:
+    container_name: common-service
+    build:
+      context: common-service
+      dockerfile: Dockerfile
+      args:
+        - PORT_NUMBER=58111
+    image: common-client
+    ports:
+      - 58111:58111
+    networks:
+      - spring-cloud-network
+    volumes:
+      - "./logs:/logs"
+    environment:
+      - EUREKA_SERVER=http://registry-server:58010/eureka
+      - CONFIG_SERVER=http://config-server:58020/
+      - PORT_NUMBER=58111
+    depends_on:
+      - gateway-server
+    healthcheck:
+      test: "curl --fail --silent localhost:58111/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    restart: on-failure
+  common-service-2:
+    container_name: common-service-2
+    image: common-client
+    ports:
+      - 58112:58112
+    networks:
+      - spring-cloud-network
+    volumes:
+      - "./logs:/logs"
+    environment:
+      - EUREKA_SERVER=http://registry-server:58010/eureka
+      - CONFIG_SERVER=http://config-server:58020/
+      - PORT_NUMBER=58112
+    depends_on:
+      - gateway-server
+    healthcheck:
+      test: "curl --fail --silent localhost:58112/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    restart: on-failure

@@ -1,0 +1,27 @@
+server:
+  port: 58111
+spring:
+  application:
+    name: common-service
+  cloud:
+    config:
+      enabled: false
+eureka:
+  client:
+    enabled: false
+logging:
+  file:
+    path: ../../logs/${spring.application.name}/${server.port}
+    max-size: 10MB
+    max-history: 30
+  pattern:
+    file: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n'
+    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger.%M - %msg%n'
+  level:
+    com:
+      netflix:
+        discovery: OFF
+        eureka: OFF
+      looks: INFO
+    org:
+      springframework: INFO

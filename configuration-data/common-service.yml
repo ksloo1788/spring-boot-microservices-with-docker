@@ -1,10 +1,5 @@
 server:
-  port: 58000
-  ssl:
-    key-store-type: PKCS12
-    key-store: 'file:${KEYSTORE_PATH:keystore.p12}'
-    key-store-password: JeffLKS@123
-    key-alias: jefflks
+  port: ${PORT_NUMBER:58111}
 eureka:
   client:
     serviceUrl:
@@ -13,7 +8,7 @@ eureka:
       enabled: true
 logging:
   file:
-    path: ../logs/${spring.application.name}/${server.port}
+    path: ../../logs/${spring.application.name}/${server.port}
     max-size: 10MB
     max-history: 30
   pattern:
@@ -22,9 +17,9 @@ logging:
   level:
     com:
       netflix:
-        discovery: false
-        eureka: false
-      jefflks: INFO
+        discovery: OFF
+        eureka: OFF
+      looks: INFO
     org:
       springframework: INFO
 management:
@@ -35,15 +30,3 @@ management:
   endpoint:
     info:
       enabled: true
-spring:
-  cloud:
-    gateway:
-      routes:
-      - id: common-service
-        uri: lb://common-service/
-        predicates:
-        - Path=/common-service/**
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true

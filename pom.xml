@@ -10,6 +10,7 @@
 		<module>service-registry-server</module>
 		<module>configuration-server</module>
 		<module>gateway-server</module>
+		<module>common-service</module>
 	</modules>
 
 	<build>
