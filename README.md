@@ -39,7 +39,7 @@ Run the following command from the root folder to create Docker containers to bu
 Then you can start your microservices architecture using Docker Compose:
 
 ```shell
-docker-compose up --force-recreate --build -d && docker image prune -f
+docker-compose up --force-recreate --build -d
 ```
 
 Last but not least, you can remove all dangling images:
