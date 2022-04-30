@@ -1,10 +1,5 @@
 server:
   port: 58000
-  ssl:
-    key-store-type: PKCS12
-    key-store: 'file:${KEYSTORE_PATH:keystore.p12}'
-    key-store-password: JeffLKS@123
-    key-alias: jefflks
 eureka:
   client:
     serviceUrl:
@@ -27,15 +22,26 @@ logging:
       jefflks: INFO
     org:
       springframework: INFO
+hystrix:
+  command:
+    fallbackcmd:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 4000
 management:
   endpoints:
     web:
       exposure:
-        include: "health,info"
+        include: health,info,hystrix.stream
   endpoint:
     info:
       enabled: true
 spring:
+  application:
+    apiId: test
+    apiKey: testing123
+    apiSubscription: 
   cloud:
     gateway:
       routes:
@@ -43,6 +49,11 @@ spring:
         uri: lb://common-service/
         predicates:
         - Path=/common-service/**
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: commonServiceCircuitBreaker
+            fallbackuri: forward:/fallback/CommonService
       discovery:
         locator:
           enabled: true
