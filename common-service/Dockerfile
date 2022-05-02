@@ -1,7 +1,6 @@
-FROM openjdk:17-alpine
+FROM openjdk:17.0.2-oraclelinux8
 MAINTAINER JeffLKS
-RUN mkdir -p /service/binary
-COPY target/common-service-1.0.0.jar /binary/common-service.jar
+COPY target/common-service-1.0.0.jar /bin/common-service.jar
 ARG PORT_NUMBER
 EXPOSE $PORT_NUMBER
-ENTRYPOINT ["java","-jar","/binary/common-service.jar"]
+ENTRYPOINT ["java","-jar","/bin/common-service.jar"]

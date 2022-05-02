@@ -1,6 +1,5 @@
-FROM openjdk:17-alpine
+FROM openjdk:17.0.2-oraclelinux8
 MAINTAINER JeffLKS
-RUN mkdir -p /service/binary
-COPY target/service-registry-server-1.0.0.jar /binary/service-registry-server.jar
+COPY target/service-registry-server-1.0.0.jar /bin/service-registry-server.jar
 EXPOSE 58010
-ENTRYPOINT ["java","-jar","/binary/service-registry-server.jar"]
+ENTRYPOINT ["java","-jar","/bin/service-registry-server.jar"]

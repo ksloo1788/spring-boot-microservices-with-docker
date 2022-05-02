@@ -22,8 +22,8 @@ services:
       retries: 5
       start_period: 40s
       
-  config-server:
-    container_name: config-server
+  configuration-server:
+    container_name: configuration-server
     build:
       context: configuration-server
       dockerfile: Dockerfile
@@ -60,11 +60,11 @@ services:
       - "./logs:/logs"
     environment:
       - EUREKA_SERVER=http://registry-server:58010/eureka
-      - CONFIG_SERVER=http://config-server:58020/
-      - KEYSTORE_PATH=/binary/keystore.p12
+      - CONFIG_SERVER=http://configuration-server:58020/
+      - KEYSTORE_PATH=/bin/keystore.p12
       - PORT_NUMBER=58112
     depends_on:
-      - config-server
+      - configuration-server
     healthcheck:
       test: "curl --fail --silent localhost:58000/actuator/health | grep UP || exit 1"
       interval: 20s
@@ -89,7 +89,7 @@ services:
       - "./logs:/logs"
     environment:
       - EUREKA_SERVER=http://registry-server:58010/eureka
-      - CONFIG_SERVER=http://config-server:58020/
+      - CONFIG_SERVER=http://configuration-server:58020/
       - PORT_NUMBER=58111
     depends_on:
       - gateway-server
@@ -100,6 +100,7 @@ services:
       retries: 5
       start_period: 40s
     restart: on-failure
+    
   common-service-2:
     container_name: common-service-2
     image: common-client
@@ -111,7 +112,7 @@ services:
       - "./logs:/logs"
     environment:
       - EUREKA_SERVER=http://registry-server:58010/eureka
-      - CONFIG_SERVER=http://config-server:58020/
+      - CONFIG_SERVER=http://configuration-server:58020/
       - PORT_NUMBER=58112
     depends_on:
       - gateway-server

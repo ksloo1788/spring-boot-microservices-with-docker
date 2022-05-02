@@ -1,5 +1,10 @@
 server:
   port: 58000
+  ssl:
+    key-store-type: PKCS12
+    key-store: 'file:${KEYSTORE_PATH:keystore.p12}'
+    key-store-password: JeffLKS@123
+    key-alias: jefflks
 eureka:
   client:
     serviceUrl:
@@ -13,7 +18,8 @@ logging:
     max-history: 30
   pattern:
     file: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n'
-    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger.%M - %msg%n'
+    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level)
+      %logger.%M - %msg%n'
   level:
     com:
       netflix:
@@ -22,26 +28,29 @@ logging:
       jefflks: INFO
     org:
       springframework: INFO
-hystrix:
-  command:
-    fallbackcmd:
-      execution:
-        isolation:
-          thread:
-            timeoutInMilliseconds: 4000
 management:
+  health:
+    circuitbreakers:
+      enabled: true
   endpoints:
     web:
       exposure:
-        include: health,info,hystrix.stream
+        include: health,info
   endpoint:
+    health:
+      show-details: always
     info:
       enabled: true
 spring:
   application:
-    apiId: test
-    apiKey: testing123
-    apiSubscription: 
+    apiId: ApiID1
+    #Sample apiId: ID1,ID2,ID3
+    #x-api-key: ID1,ID2,ID3
+    apiKey: Key@123
+    #Sample apiKey: Key@1,Key@2,Key@3
+    #x-api-key (encrypt with bcrypt strength 10 and remove bcrypt prefix $2a$10$): ID1[Key@1],ID2[Key@2],ID3[Key@3]
+    apiSubscription: ApiID1[common-service]
+    #apiSubscription: ID1[Service1],ID2[Service1&Service2],ID3[Service1&Service2&Service3]
   cloud:
     gateway:
       routes:
@@ -52,8 +61,8 @@ spring:
         filters:
         - name: CircuitBreaker
           args:
-            name: commonServiceCircuitBreaker
-            fallbackuri: forward:/fallback/CommonService
+            name: common-service-circuit-breaker
+            fallbackuri: forward:/fallback
       discovery:
         locator:
           enabled: true

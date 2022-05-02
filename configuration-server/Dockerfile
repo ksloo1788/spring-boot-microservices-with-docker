@@ -1,6 +1,5 @@
-FROM openjdk:17-alpine
+FROM openjdk:17.0.2-oraclelinux8
 MAINTAINER JeffLKS
-RUN mkdir -p /service/binary
-COPY target/configuration-server-1.0.0.jar /binary/configuration-server.jar
+COPY target/configuration-server-1.0.0.jar /bin/configuration-server.jar
 EXPOSE 58000
-ENTRYPOINT ["java","-jar","/binary/configuration-server.jar"]
+ENTRYPOINT ["java","-jar","/bin/configuration-server.jar"]
