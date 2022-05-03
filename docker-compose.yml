@@ -2,7 +2,26 @@ version: '3.9'
 networks:
   spring-cloud-network:
     driver: bridge
-services:    
+services:     
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - "./configuration-data/prometheus.yml:/etc/prometheus/prometheus.yml"
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: password
+    ports:
+      - 3000:3000
+    volumes:
+      - "./grafana-data:/var/lib/grafana"
+    depends_on:
+      - prometheus
   registry-server:
     container_name: registry-server
     build:
@@ -21,7 +40,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 40s
-      
   configuration-server:
     container_name: configuration-server
     build:
@@ -45,7 +63,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 40s
-      
   gateway-server:
     container_name: gateway-server
     build:
@@ -72,7 +89,6 @@ services:
       retries: 5
       start_period: 40s
     restart: on-failure
-    
   common-service:
     container_name: common-service
     build:
@@ -80,7 +96,7 @@ services:
       dockerfile: Dockerfile
       args:
         - PORT_NUMBER=58111
-    image: common-client
+    image: common-service
     ports:
       - 58111:58111
     networks:
@@ -100,10 +116,14 @@ services:
       retries: 5
       start_period: 40s
     restart: on-failure
-    
   common-service-2:
     container_name: common-service-2
-    image: common-client
+    build:
+      context: common-service
+      dockerfile: Dockerfile
+      args:
+        - PORT_NUMBER=58111
+    image: common-service
     ports:
       - 58112:58112
     networks:
